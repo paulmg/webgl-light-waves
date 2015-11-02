@@ -412,7 +412,6 @@ WaveGroup.prototype.init = function() {
     this.waves.push(new Wave(i, this));
     this.waveHolder.add(this.waves[i].mesh);
   }
-  guiWaves(gui, this);
   scene.add(this.waveHolder);
 };
 
@@ -455,8 +454,6 @@ var Wave = function(count) {
    var vertex = this.mesh.geometry.vertices[i];
    vertex.y = 1 * Math.pow(2, 0.2 * vertex.y);
    }*/
-
-  //guiWave(gui, this);
 };
 
 Wave.prototype.update = function(waveVals, time) {
@@ -601,8 +598,6 @@ function init() {
     composer.addPass(effectFXAA);
     composer.addPass(effectBloom);
     composer.addPass(effectCopy);
-
-    guiPostProcess(gui);
   }
 
   // orbit controls
