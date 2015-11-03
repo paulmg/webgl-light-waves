@@ -32,8 +32,11 @@ module.exports = {
     loaders: [
       {
         test: /\.js?$/,
-        loader: 'babel?stage=0',
-        exclude: /node_modules/
+        exclude: /(node_modules|bower_components)/,
+        loader: 'babel-loader',
+        query: {
+          presets: ['es2015']
+        }
       }
     ]
   }
