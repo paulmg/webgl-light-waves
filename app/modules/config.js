@@ -1,4 +1,4 @@
-module.exports = {
+var config = {
   planeWidth: 220,
   planeHeight: 20,
   planeWSegs: 100,
@@ -18,3 +18,5 @@ module.exports = {
   speed: 20,
   speedTime: 2
 };
+
+export default config;

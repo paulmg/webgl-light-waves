@@ -1,18 +1,18 @@
-var Config = require('./modules/config');
-var WaveGroup = require('./modules/waveGroup');
+import Config from './modules/config';
+import WaveGroup from './modules/waveGroup';
 
-var container, stats, rendererStats;
+let container, stats, rendererStats;
 
-var camera, controls, scene, sceneBG, meshBG, renderer, composer;
+let camera, controls, scene, sceneBG, meshBG, renderer, composer;
 
-var waveGroup;
+let waveGroup;
 
-var clock;
-var speedInterval;
+let clock;
+let speedInterval;
 
-var dpr, renderModel, effectFXAA, effectBloom, effectCopy;
+let dpr, renderModel, effectFXAA, effectBloom, effectCopy;
 
-var width  = window.innerWidth,
+const width  = window.innerWidth,
     height = window.innerHeight;
 
 // check for webgl
@@ -42,9 +42,9 @@ function init() {
   scene.add(camera);
 
   // background
-  var map = THREE.ImageUtils.loadTexture('http://i.imgur.com/yU1t4dp.jpg');
-  var geometry = new THREE.PlaneGeometry(512, 256, 10, 10);
-  var material = new THREE.MeshBasicMaterial({
+  let map = THREE.ImageUtils.loadTexture('http://i.imgur.com/yU1t4dp.jpg');
+  let geometry = new THREE.PlaneGeometry(512, 256, 10, 10);
+  let material = new THREE.MeshBasicMaterial({
     color: 0xffffff,
     transparent: true,
     opacity: 0.20,
@@ -102,9 +102,7 @@ function init() {
     renderer.gammaInput = true;
     renderer.gammaOutput = true;
 
-    //var renderBackground = new THREE.RenderPass(sceneBG, camera);
     renderModel = new THREE.RenderPass(scene, camera);
-    //renderModel.clear = false;
 
     effectBloom = new THREE.BloomPass(Config.bloomStrength, Config.bloomKernel, Config.bloomSigma);
     effectCopy = new THREE.ShaderPass(THREE.CopyShader);
@@ -120,7 +118,7 @@ function init() {
 
     effectCopy.renderToScreen = true;
 
-    var rtParameters = {
+    let rtParameters = {
       minFilter: THREE.LinearFilter,
       magFilter: THREE.LinearFilter,
       format: THREE.RGBFormat,
@@ -145,7 +143,7 @@ function init() {
 }
 
 function speedUpLoop() {
-  var nextTime = Math.max(14000 * Math.random(), 8000);
+  let nextTime = Math.max(14000 * Math.random(), 8000);
   Config.isSpeedingUp = true;
 
   setTimeout(speedUpLoop, nextTime);
@@ -153,7 +151,7 @@ function speedUpLoop() {
 
 function onWindowResize() {
   // threex window resize
-  var rendererSize = {
+  let rendererSize = {
     width: window.innerWidth,
     height: window.innerHeight
   };
@@ -180,14 +178,14 @@ function animate() {
 }
 
 function render() {
-  var time  = clock.getElapsedTime(),
+  let time  = clock.getElapsedTime(),
       delta = clock.getDelta();
 
   if(Config.isSpeedingUp) {
     if(!Config.isTweening) {
       Config.isTweening = true;
 
-      var newSpeed = Config.newTime.futureTime + Config.speed;
+      let newSpeed = Config.newTime.futureTime + Config.speed;
       Config.newTime.currentTime = time;
       TweenMax.to(Config.newTime, Config.speedTime, {
         futureTime: newSpeed,
@@ -211,7 +209,7 @@ function render() {
   }
 
   // bg color loop
-  var h = time * 8 % 360 / 360;
+  let h = time * 8 % 360 / 360;
   meshBG.material.color.setHSL(h, 1, 0.5);
 
   // post process check
@@ -228,45 +226,45 @@ function render() {
   }
 }
 
-function guiPostProcess(gui) {
-  var folder = Config.gui.addFolder('Post Process');
+function guiPostProcess() {
+  let folder = Config.gui.addFolder('Post Process');
 
-  //folder.add(window, 'postProcess');
-  //folder.add(window, 'bloomStrength').min(0).max(3).onFinishChange(function() {
-  //  composer.passes = [];
-  //  effectBloom = new THREE.BloomPass(bloomStrength, bloomKernel, bloomSigma);
-  //  composer.addPass(renderModel);
-  //  composer.addPass(effectFXAA);
-  //  composer.addPass(effectBloom);
-  //  composer.addPass(effectCopy);
-  //});
-  //folder.add(window, 'bloomKernel').min(0).max(50).onFinishChange(function() {
-  //  composer.passes = [];
-  //  effectBloom = new THREE.BloomPass(bloomStrength, bloomKernel, bloomSigma);
-  //  composer.addPass(renderModel);
-  //  composer.addPass(effectFXAA);
-  //  composer.addPass(effectBloom);
-  //  composer.addPass(effectCopy);
-  //});
-  //folder.add(window, 'bloomSigma').min(0).max(48).step(8).onFinishChange(function() {
-  //  composer.passes = [];
-  //  effectBloom = new THREE.BloomPass(bloomStrength, bloomKernel, bloomSigma);
-  //  composer.addPass(renderModel);
-  //  composer.addPass(effectFXAA);
-  //  composer.addPass(effectBloom);
-  //  composer.addPass(effectCopy);
-  //});
+  folder.add(Config, 'postProcess');
+  folder.add(Config, 'bloomStrength').min(0).max(3).onFinishChange(function() {
+    composer.passes = [];
+    effectBloom = new THREE.BloomPass(Config.bloomStrength, Config.bloomKernel, Config.bloomSigma);
+    composer.addPass(renderModel);
+    composer.addPass(effectFXAA);
+    composer.addPass(effectBloom);
+    composer.addPass(effectCopy);
+  });
+  folder.add(Config, 'bloomKernel').min(0).max(50).onFinishChange(function() {
+    composer.passes = [];
+    effectBloom = new THREE.BloomPass(Config.bloomStrength, Config.bloomKernel, Config.bloomSigma);
+    composer.addPass(renderModel);
+    composer.addPass(effectFXAA);
+    composer.addPass(effectBloom);
+    composer.addPass(effectCopy);
+  });
+  folder.add(Config, 'bloomSigma').min(0).max(48).step(8).onFinishChange(function() {
+    composer.passes = [];
+    effectBloom = new THREE.BloomPass(Config.bloomStrength, Config.bloomKernel, Config.bloomSigma);
+    composer.addPass(renderModel);
+    composer.addPass(effectFXAA);
+    composer.addPass(effectBloom);
+    composer.addPass(effectCopy);
+  });
 }
 
 function guiScene(scene) {
-  var folder = Config.gui.addFolder('Scene');
+  let folder = Config.gui.addFolder('Scene');
 
-  var data = {
+  let data = {
     background: "#000000"
   };
 
-  var color = new THREE.Color();
-  var colorConvert = handleColorChange(color);
+  let color = new THREE.Color();
+  let colorConvert = handleColorChange(color);
 
   folder.addColor(data, "background").onChange(function(value) {
     colorConvert(value);
@@ -277,10 +275,10 @@ function guiScene(scene) {
 }
 
 function guiSceneFog(folder, scene) {
-  var fogFolder = folder.addFolder('scene.fog');
-  var fog = new THREE.Fog(0x3f7b9d, 0, 60);
+  let fogFolder = folder.addFolder('scene.fog');
+  let fog = new THREE.Fog(0x3f7b9d, 0, 60);
 
-  var data = {
+  let data = {
     fog: {
       "THREE.Fog()": false,
       "scene.fog.color": fog.color.getHex()
